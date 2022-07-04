@@ -2,6 +2,7 @@ import { Fragment, useContext } from 'react';
 import { Outlet, Link } from 'react-router-dom';
 
 import { ReactComponent as CrwnLogo } from '../../assets/crown.svg';
+import { ProductContext } from '../../context/ProductsContext.context';
 import { User } from '../../context/UserContext.context';
 import { fireSignout } from '../../utils/firebase/firebase.utils';
 
@@ -9,6 +10,7 @@ import './navigation.styles.scss';
 
 const Navigation = () => {
   const {currentUser, setCurrentUser} = useContext(User);
+  const {products} = useContext(ProductContext)
   const handleSignout = async ()=>{
     await fireSignout();
     setCurrentUser(null);
