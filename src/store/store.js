@@ -1,7 +1,9 @@
 import { compose, createStore, applyMiddleware } from 'redux';
 // import logger from 'redux-logger';
-
+import { persistStore, persistReducer } from "redux-persist";
+import storage from 'redux-persist/lib/storage';
 import { rootReducer } from './root-reducer';
+import thunk from 'redux-thunk';
 
 const loggerMiddleware = (store) => (next) => (action) => {
   if (!action.type) {
@@ -21,4 +23,22 @@ const middleWares = [loggerMiddleware];
 
 const composedEnhancers = compose(applyMiddleware(...middleWares));
 
-export const store = createStore(rootReducer, undefined, composedEnhancers);
+const persistConfig = {
+  key:'root',
+  storage,
+  whitelist:['cart']
+};
+const composeEnhancers =
+  (typeof window !== "undefined" &&
+    window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) ||
+  compose;
+
+const persistedReducer = persistReducer(persistConfig, rootReducer)
+
+export const store = createStore(
+  persistedReducer,
+  undefined,
+  composeEnhancers(applyMiddleware(...middleWares,thunk))
+);
+
+export const persistor = persistStore(store);
